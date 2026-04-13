@@ -2,6 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta property="og:title" content="Rajinikanth Crossword — Can you find all 27 films?">
+<meta property="og:description" content="Test your knowledge of the Superstar's films. 27 Rajinikanth movies hidden in one crossword.">
+<meta property="og:image" content="https://rajini.orucupoxygen.com/Rajinikanth.jpeg">
+<meta property="og:url" content="https://rajini.orucupoxygen.com">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Rajinikanth Crossword</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
@@ -330,13 +336,138 @@
     .cell.white input { font-size: 0.75rem; padding-top: 6px; }
     .cell.white .num { font-size: 6px; }
   }
+
+  /* COMPLETION POPUP */
+  .popup-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  .popup-overlay.show {
+    display: flex;
+  }
+  .popup {
+    background: var(--black);
+    border: 2px solid var(--gold);
+    border-radius: 8px;
+    max-width: 420px;
+    width: 100%;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    position: relative;
+    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  @keyframes popIn {
+    from { transform: scale(0.7); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+  }
+  .popup-close {
+    position: absolute;
+    top: 0.8rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 1.4rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+  }
+  .popup-close:hover { color: var(--white); }
+  .popup-star {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .popup h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.2rem;
+    color: var(--gold);
+    letter-spacing: 0.08em;
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+  }
+  .popup .popup-sub {
+    font-size: 0.95rem;
+    color: #aaa;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+  .popup .popup-sub strong {
+    color: var(--white);
+  }
+  .popup-divider {
+    height: 1px;
+    background: #333;
+    margin: 1.2rem 0;
+  }
+  .popup-oco-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    color: #666;
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+  }
+  .popup-oco-tagline {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    color: var(--white);
+    letter-spacing: 0.06em;
+    margin-bottom: 0.3rem;
+  }
+  .popup-oco-desc {
+    font-size: 0.82rem;
+    color: #888;
+    margin-bottom: 1.2rem;
+    line-height: 1.5;
+  }
+  .popup-badges {
+    display: flex;
+    gap: 0.6rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .popup-badge {
+    display: inline-block;
+    padding: 0.55rem 1.1rem;
+    border-radius: 4px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+  .badge-ios {
+    background: var(--gold);
+    color: var(--black);
+  }
+  .badge-ios:hover { background: var(--gold-light); }
+  .badge-android {
+    background: transparent;
+    color: var(--gold);
+    border: 1.5px solid var(--gold);
+  }
+  .badge-android:hover { background: #1a1400; }
+  .badge-web {
+    background: transparent;
+    color: #888;
+    border: 1.5px solid #444;
+    font-size: 0.78rem;
+  }
+  .badge-web:hover { color: var(--white); border-color: #888; }
 </style>
 </head>
 <body>
 
 <div class="header">
   <div class="header-inner">
-    <img src="rajinikanth.jpeg" alt="Rajinikanth" class="hero-img">
+    <img src="Rajinikanth.jpeg" alt="Rajinikanth" class="hero-img">
     <div class="header-text">
       <h1>Rajinikanth</h1>
       <p class="subtitle">The Films — A Crossword</p>
@@ -769,9 +900,20 @@ function checkComplete() {
   );
   if (allFilled && allCorrect) {
     document.getElementById('congrats').classList.add('show');
-    document.getElementById('congrats').scrollIntoView({behavior:'smooth'});
+    setTimeout(() => {
+      document.getElementById('popup-overlay').classList.add('show');
+    }, 800);
   }
 }
+
+function closePopup() {
+  document.getElementById('popup-overlay').classList.remove('show');
+}
+
+// Close on overlay click
+document.getElementById('popup-overlay')?.addEventListener('click', function(e) {
+  if (e.target === this) closePopup();
+});
 
 // Init
 buildWordMap();
@@ -787,5 +929,25 @@ if (firstKey) {
   updateClueBar();
 }
 </script>
+
+<!-- COMPLETION POPUP -->
+<div class="popup-overlay" id="popup-overlay">
+  <div class="popup">
+    <button class="popup-close" onclick="closePopup()">&#x2715;</button>
+    <div class="popup-star">&#127881;</div>
+    <h2>Superstar Salute!</h2>
+    <p class="popup-sub">You found all <strong>27 Rajinikanth films</strong> in this crossword.<br>Style is everything — and so is knowing your Tamil cinema.</p>
+    <div class="popup-divider"></div>
+    <div class="popup-oco-label">You clearly know your Tamil cinema</div>
+    <img src="oco-logo.png" alt="Oru Cup Oxygen" style="height:48px;width:auto;margin:0.5rem auto 0.3rem;display:block;">
+    <div class="popup-oco-tagline">Now hear it.</div>
+    <p class="popup-oco-desc">Tamil audio wellness.<br>Focus. Sleep. Explore.<br>No Scroll. No Ads. No Video. No Algorithm.</p>
+    <div class="popup-badges">
+      <a class="popup-badge badge-ios" href="https://apps.apple.com/in/app/orucupoxygen/id6758971206" target="_blank">App Store</a>
+      <a class="popup-badge badge-android" href="https://play.google.com/store/apps/details?id=com.orucupoxygen.app" target="_blank">Google Play</a>
+      <a class="popup-badge badge-web" href="https://orucupoxygen.com" target="_blank">Visit Website</a>
+    </div>
+  </div>
+</div>
 </body>
 </html>
