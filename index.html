@@ -715,6 +715,7 @@ function buildGrid() {
           focusNoScroll(input);
         });
         input.addEventListener('keydown', (e) => handleKey(e, r, c));
+        input.addEventListener('input', (e) => handleMobileInput(e, r, c));
 
         cells[`${r},${c}`] = {div, input, letter: data.letter};
       }
@@ -780,10 +781,12 @@ function handleKey(e, r, c) {
     e.preventDefault();
     const inp = cells[key]?.input;
     if (inp) {
+      inp.dataset.keyhandled = '1';
       inp.value = e.key.toUpperCase();
       clearCellState(key);
       moveForward(r, c);
       checkComplete();
+      setTimeout(() => { inp.dataset.keyhandled = '0'; }, 50);
     }
   }
 }
