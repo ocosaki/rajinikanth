@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rajinikanth Crossword</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --gold: #f5c518;
+    --gold-dark: #c9a000;
+    --gold-light: #ffe066;
+    --red: #c0392b;
+    --white: #f8f4e8;
+    --grey: #2a2a2a;
+    --cell: 38px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Barlow', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
+  .header {
+    padding: 1.5rem 1.5rem 0;
+  }
+  .header-inner {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-bottom: 1.2rem;
+    border-bottom: 3px solid var(--gold);
+  }
+  .hero-img {
+    width: 110px;
+    height: 110px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid var(--gold);
+    flex-shrink: 0;
+    box-shadow: 0 0 20px rgba(245,197,24,0.25);
+  }
+  .header-text {
+    text-align: left;
+  }
+  .header h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 7vw, 4.5rem);
+    letter-spacing: 0.08em;
+    color: var(--gold);
+    text-shadow: 0 0 40px rgba(245,197,24,0.3);
+    line-height: 1;
+  }
+  .header .subtitle {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.2em;
+    color: #888;
+    margin-top: 0.2rem;
+    text-transform: uppercase;
+  }
+  .header .challenge {
+    font-family: 'Barlow', sans-serif;
+    font-size: 1rem;
+    color: var(--white);
+    margin-top: 0.5rem;
+    font-weight: 500;
+  }
+  .header .challenge span {
+    color: var(--gold);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    letter-spacing: 0.05em;
+    vertical-align: middle;
+  }
+
+  /* CLUE DISPLAY BAR */
+  .clue-bar {
+    background: var(--grey);
+    border-top: 2px solid var(--gold);
+    border-bottom: 1px solid #333;
+    padding: 0.6rem 1.5rem;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .clue-bar .clue-tag {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+    min-width: 80px;
+  }
+  .clue-bar .clue-text {
+    font-size: 0.9rem;
+    color: var(--white);
+    line-height: 1.4;
+  }
+  .clue-bar .clue-text.empty {
+    color: #555;
+    font-style: italic;
+  }
+
+  /* MAIN LAYOUT */
+  .main {
+    display: flex;
+    gap: 2rem;
+    padding: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    align-items: flex-start;
+  }
+
+  /* GRID */
+  .grid-wrap {
+    flex-shrink: 0;
+  }
+  .grid {
+    display: inline-grid;
+    grid-template-columns: repeat(19, var(--cell));
+    grid-template-rows: repeat(20, var(--cell));
+    gap: 2px;
+    background: #111;
+    border: 2px solid #333;
+    padding: 2px;
+  }
+
+  .cell {
+    width: var(--cell);
+    height: var(--cell);
+    background: var(--black);
+  }
+  .cell.white {
+    background: var(--white);
+    position: relative;
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+  .cell.white input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    text-align: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--black);
+    text-transform: uppercase;
+    cursor: pointer;
+    caret-color: transparent;
+    padding-top: 8px;
+  }
+  .cell.white .num {
+    position: absolute;
+    top: 2px;
+    left: 3px;
+    font-size: 8px;
+    font-family: 'Barlow', sans-serif;
+    font-weight: 600;
+    color: #333;
+    line-height: 1;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .cell.white.highlighted {
+    background: #b8d4f0;
+  }
+  .cell.white.active {
+    background: var(--gold-light);
+  }
+  .cell.white.correct {
+    background: #c8f0c8;
+  }
+  .cell.white.wrong {
+    background: #f0c8c8;
+  }
+
+  /* CLUES PANEL */
+  .clues-panel {
+    flex: 1;
+    min-width: 0;
+    max-height: 85vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--gold) #222;
+  }
+  .clues-panel::-webkit-scrollbar { width: 4px; }
+  .clues-panel::-webkit-scrollbar-track { background: #222; }
+  .clues-panel::-webkit-scrollbar-thumb { background: var(--gold); }
+
+  .clues-section {
+    margin-bottom: 1.5rem;
+  }
+  .clues-section h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    color: var(--gold);
+    letter-spacing: 0.15em;
+    border-bottom: 1px solid #333;
+    padding-bottom: 0.4rem;
+    margin-bottom: 0.8rem;
+  }
+  .clue-item {
+    display: flex;
+    gap: 0.6rem;
+    padding: 0.4rem 0.5rem;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background 0.15s;
+    align-items: flex-start;
+  }
+  .clue-item:hover {
+    background: #1a1a1a;
+  }
+  .clue-item.active {
+    background: #1a1400;
+    border-left: 2px solid var(--gold);
+  }
+  .clue-item.solved {
+    opacity: 0.45;
+  }
+  .clue-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    color: var(--gold-dark);
+    min-width: 32px;
+    line-height: 1.4;
+  }
+  .clue-txt {
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: #ccc;
+  }
+  .clue-item.active .clue-txt {
+    color: var(--white);
+  }
+
+  /* CONTROLS */
+  .controls {
+    display: flex;
+    gap: 0.8rem;
+    padding: 1rem 1.5rem;
+    flex-wrap: wrap;
+    border-top: 1px solid #222;
+  }
+  button {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    padding: 0.5rem 1.2rem;
+    border: 1.5px solid;
+    border-radius: 2px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.15s;
+  }
+  .btn-check {
+    background: var(--gold);
+    color: var(--black);
+    border-color: var(--gold);
+  }
+  .btn-check:hover { background: var(--gold-light); }
+  .btn-reveal {
+    background: transparent;
+    color: var(--gold);
+    border-color: var(--gold);
+  }
+  .btn-reveal:hover { background: #1a1400; }
+  .btn-clear {
+    background: transparent;
+    color: #888;
+    border-color: #444;
+  }
+  .btn-clear:hover { color: var(--white); border-color: #888; }
+
+  .score {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+  }
+
+  /* CONGRATS */
+  .congrats {
+    display: none;
+    text-align: center;
+    padding: 1rem;
+    background: linear-gradient(135deg, #1a1400, #0a0a0a);
+    border: 1px solid var(--gold);
+    margin: 0 1.5rem 1rem;
+    border-radius: 4px;
+  }
+  .congrats.show { display: block; }
+  .congrats h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+  }
+
+  @media (max-width: 900px) {
+    :root { --cell: 28px; }
+    .main { flex-direction: column; padding: 0.8rem; gap: 1rem; }
+    .clues-panel { max-height: none; }
+    .clue-txt { font-size: 0.78rem; }
+  }
+  @media (max-width: 600px) {
+    :root { --cell: 22px; }
+    .cell.white input { font-size: 0.75rem; padding-top: 6px; }
+    .cell.white .num { font-size: 6px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <img src="rajinikanth.jpeg" alt="Rajinikanth" class="hero-img">
+    <div class="header-text">
+      <h1>Rajinikanth</h1>
+      <p class="subtitle">The Films — A Crossword</p>
+      <p class="challenge">Can you find all <span>27</span> of his films hidden in this crossword?</p>
+    </div>
+  </div>
+</div>
+
+<div class="clue-bar">
+  <div class="clue-tag" id="bar-tag">Select a cell</div>
+  <div class="clue-text empty" id="bar-clue">Click any cell to begin</div>
+</div>
+
+<div class="main">
+  <div class="grid-wrap">
+    <div class="grid" id="grid"></div>
+  </div>
+  <div class="clues-panel">
+    <div class="clues-section">
+      <h2>Across</h2>
+      <div id="across-list"></div>
+    </div>
+    <div class="clues-section">
+      <h2>Down</h2>
+      <div id="down-list"></div>
+    </div>
+  </div>
+</div>
+
+<div class="controls">
+  <button class="btn-check" onclick="checkAll()">Check Answers</button>
+  <button class="btn-reveal" onclick="revealWord()">Reveal Word</button>
+  <button class="btn-clear" onclick="clearAll()">Clear All</button>
+  <div class="score" id="score"></div>
+</div>
+
+<div class="congrats" id="congrats">
+  <h3>🎬 Superstar Salute! 🎬</h3>
+  <p style="color:#ccc;font-size:0.9rem;margin-top:0.4rem;">You've solved all 27 Rajini films. Style is everything.</p>
+</div>
+
+<script>
+const GRID_DATA = [[null,null,{"letter":"M","num":1},null,null,null,null,null,{"letter":"T","num":2},{"letter":"H","num":0},{"letter":"A","num":0},{"letter":"N","num":0},{"letter":"G","num":3},{"letter":"A","num":0},{"letter":"M","num":4},{"letter":"A","num":0},{"letter":"G","num":5},{"letter":"A","num":0},{"letter":"N","num":6}],[null,null,{"letter":"A","num":0},null,null,null,null,null,{"letter":"H","num":0},null,null,null,{"letter":"A","num":0},null,{"letter":"A","num":0},null,{"letter":"U","num":0},null,{"letter":"A","num":0}],[{"letter":"P","num":7},{"letter":"A","num":0},{"letter":"N","num":0},{"letter":"A","num":0},{"letter":"K","num":0},{"letter":"K","num":8},{"letter":"A","num":0},{"letter":"R","num":0},{"letter":"A","num":0},{"letter":"N","num":0},null,null,{"letter":"Y","num":0},null,{"letter":"P","num":0},null,{"letter":"R","num":0},null,{"letter":"A","num":0}],[{"letter":"O","num":0},null,{"letter":"I","num":0},null,{"letter":"A","num":0},{"letter":"A","num":0},null,null,{"letter":"L","num":0},null,null,null,{"letter":"A","num":0},null,{"letter":"P","num":0},null,{"letter":"U","num":0},null,{"letter":"N","num":0}],[{"letter":"L","num":0},null,{"letter":"T","num":0},null,{"letter":"M","num":9},{"letter":"A","num":0},{"letter":"N","num":0},{"letter":"N","num":0},{"letter":"A","num":0},{"letter":"N","num":0},null,null,{"letter":"T","num":0},null,{"letter":"I","num":0},null,{"letter":"S","num":0},null,{"letter":"A","num":0}],[{"letter":"L","num":0},null,{"letter":"H","num":0},null,{"letter":"L","num":0},{"letter":"L","num":0},null,null,{"letter":"P","num":0},null,null,null,{"letter":"H","num":0},null,{"letter":"L","num":0},null,{"letter":"I","num":0},null,{"letter":"D","num":0}],[{"letter":"A","num":0},null,{"letter":"A","num":0},null,{"letter":"I","num":0},{"letter":"I","num":0},null,{"letter":"B","num":10},{"letter":"A","num":0},{"letter":"B","num":0},{"letter":"A","num":0},null,{"letter":"R","num":0},null,{"letter":"L","num":0},null,{"letter":"S","num":0},null,{"letter":"I","num":0}],[{"letter":"D","num":0},null,{"letter":"N","num":0},null,null,null,null,null,{"letter":"T","num":0},null,null,null,{"letter":"I","num":0},null,{"letter":"A","num":0},null,{"letter":"H","num":0},null,{"letter":"M","num":0}],[{"letter":"H","num":0},null,null,{"letter":"R","num":11},null,null,null,null,{"letter":"H","num":0},null,null,null,null,null,{"letter":"I","num":0},null,{"letter":"Y","num":0},null,{"letter":"A","num":0}],[{"letter":"A","num":0},null,{"letter":"R","num":12},{"letter":"A","num":0},{"letter":"J","num":0},{"letter":"A","num":0},{"letter":"T","num":0},{"letter":"H","num":0},{"letter":"I","num":0},{"letter":"R","num":0},{"letter":"A","num":0},{"letter":"J","num":0},{"letter":"A","num":0},null,null,null,{"letter":"A","num":0},null,{"letter":"I","num":0}],[{"letter":"V","num":0},null,null,{"letter":"N","num":0},null,null,null,null,null,null,null,{"letter":"O","num":13},null,null,null,null,{"letter":"N","num":0},null,{"letter":"I","num":0}],[{"letter":"A","num":0},null,null,{"letter":"U","num":0},null,null,null,null,null,null,null,{"letter":"H","num":0},null,null,null,null,null,null,{"letter":"L","num":0}],[{"letter":"N","num":0},null,null,{"letter":"V","num":0},null,{"letter":"V","num":14},{"letter":"E","num":0},{"letter":"E","num":0},{"letter":"R","num":0},{"letter":"A","num":0},null,{"letter":"N","num":0},null,null,null,null,null,null,{"letter":"L","num":0}],[null,null,null,{"letter":"A","num":0},null,null,null,null,null,null,null,{"letter":"N","num":0},null,null,{"letter":"P","num":15},{"letter":"E","num":0},{"letter":"T","num":16},{"letter":"T","num":0},{"letter":"A","num":0}],[{"letter":"M","num":17},{"letter":"A","num":0},{"letter":"A","num":0},{"letter":"V","num":0},{"letter":"E","num":0},{"letter":"E","num":0},{"letter":"R","num":0},{"letter":"A","num":0},{"letter":"N","num":0},null,null,{"letter":"Y","num":0},null,null,null,null,{"letter":"Y","num":0},null,{"letter":"I","num":0}],[{"letter":"U","num":0},null,null,{"letter":"E","num":0},null,null,null,null,null,null,{"letter":"V","num":18},null,null,null,null,null,{"letter":"A","num":0},null,null],[{"letter":"T","num":19},{"letter":"H","num":0},{"letter":"E","num":0},{"letter":"E","num":0},null,null,null,null,null,{"letter":"B","num":20},{"letter":"A","num":0},{"letter":"A","num":0},{"letter":"S","num":0},{"letter":"H","num":0},{"letter":"A","num":0},null,{"letter":"G","num":0},null,null],[{"letter":"H","num":0},null,null,{"letter":"R","num":0},null,null,{"letter":"H","num":21},null,null,null,{"letter":"L","num":0},null,{"letter":"I","num":0},null,null,null,{"letter":"I","num":0},null,null],[{"letter":"U","num":0},null,null,{"letter":"A","num":0},null,null,{"letter":"U","num":0},null,null,null,{"letter":"L","num":0},null,{"letter":"V","num":22},null,null,null,null,null,null],[null,null,{"letter":"A","num":23},{"letter":"N","num":0},{"letter":"N","num":0},{"letter":"A","num":0},{"letter":"M","num":0},{"letter":"A","num":0},{"letter":"L","num":0},{"letter":"A","num":0},{"letter":"I","num":0},null,{"letter":"A","num":24},{"letter":"N","num":0},{"letter":"N","num":0},{"letter":"A","num":0},{"letter":"T","num":0},{"letter":"H","num":0},{"letter":"E","num":0}]];
+
+const ACROSS = {
+  "2": {"word":"THANGAMAGAN","clue":"A movie album with super duper hits. One of the songs from this was remixed for his latest movie. (6,5)"},
+  "7": {"word":"PANAKKARAN","clue":"Knock off everyone before the beedi burns out (10)"},
+  "9": {"word":"MANNAN","clue":"Remake of a kannada movie. He was not just an actor in this. Took a new avatar as a singer. (6)"},
+  "10": {"word":"BABA","clue":"Bakthi vs politics. 7 boons and a dash with the goons. (4)"},
+  "12": {"word":"RAJATHIRAJA","clue":"Lookalikes interchange. Rajasekhar or Chinraasu? Irrespective it is a Raja treat. (7,4)"},
+  "14": {"word":"VEERA","clue":"Journey of a supersinger, from a village to a stage. (5)"},
+  "15": {"word":"PETTA","clue":"A tribute to the 90s Superstar from a fanboy director (5)"},
+  "17": {"word":"MAAVEERAN","clue":"Remake of a hindi movie, set in a pre independent India. First Tamil film to be shot in 70 mm film format and have a six-track stereophonic sound. (9)"},
+  "19": {"word":"THEE","clue":"The original coolie in Tamil with the significant 786 (4)"},
+  "20": {"word":"BAASHA","clue":"Rimless and ruthless in the past. Kind and responsible in the present. (6)"},
+  "23": {"word":"ANNAMALAI","clue":"An important friendship. An iconic challenge. A transformational song. (9)"},
+  "24": {"word":"ANNATHE","clue":"Search for a sister, with a green parrot as a sidekick. (7)"}
+};
+
+const DOWN = {
+  "1": {"word":"MANITHAN","clue":"A man who is cast out as unlucky, goes to destroy the villains wearing the ultimate leather jacket with hooks for bombs. (8)"},
+  "2": {"word":"THALAPATHI","clue":"Son of Sun. Search for a mother, ends up finding 2 brothers, one through blood and one of blood. (10)"},
+  "3": {"word":"GAYATHRI","clue":"A full on negative shade. A wolf who records everything secretly. Even his wife. (8)"},
+  "4": {"word":"MAPPILLAI","clue":"His first pair became his mother in law (9)"},
+  "5": {"word":"GURUSISHYAN","clue":"A comic caper, with an indiana jonesesque climax in a golden cave. (4,7)"},
+  "6": {"word":"NAANADIMAIILLAI","clue":"Photographer separates from his wife. The last time Parattai paired with Mayil in Tamil. (4,6,5)"},
+  "7": {"word":"POLLADHAVAN","clue":"She knows he is the killer. But she cannot reveal it. Superstar with a beard and his trademark style in a thriller - written by Salim Javed primarily for the south. (11)"},
+  "8": {"word":"KAALI","clue":"Joined hands with Chiranjeevi (for the Telugu version) in this Bilingual, written by Mahendran. (5)"},
+  "11": {"word":"RANUVAVEERAN","clue":"If superstar is the hero and megastar is the villain, what more do you want? (6,6)"},
+  "13": {"word":"JOHNNY","clue":"Miser barber and a wiser thief. A double action thriller from Mahendran with evergreen music. (6)"},
+  "16": {"word":"TYAGI","clue":"Hindi version of his tamil blockbuster. A naive man, fooled by his brothers. You can put a price tag to his attire, but not to him. (5)"},
+  "17": {"word":"MUTHU","clue":"Boss becomes servant, still rides a chariot and dances in Kulu valley. (5)"},
+  "18": {"word":"VALLI","clue":"Drapes his wife's saree around the waist and plays a guitar. He was not just an actor, he wrote the story as well. (5)"},
+  "21": {"word":"SIVA","clue":"Tiger fights a tiger. Becomes a devadas in a song searching for his Parvathi. (4)"},
+  "22": {"word":"HUM","clue":"There were so many stars that it was a constellation in this Hindi movie. The seed for a tamil blockbuster. Even if you dont know the name, can you Jumma guess, I mean Chumma guess? (3)"}
+};
+
+const ROWS = 20, COLS = 19;
+let activeCell = null;
+let activeDir = 'A';
+let cells = {};
+let wordMap = {}; // cell key -> {A: clueNum, D: clueNum}
+let clueWords = {}; // "A2" -> [{r,c}, ...]
+
+// Build cell structures
+function buildWordMap() {
+  // For each numbered cell, find the full word extent
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const cell = GRID_DATA[r][c];
+      if (!cell || !cell.num) continue;
+      const n = cell.num;
+      const key = `${r},${c}`;
+      if (!wordMap[key]) wordMap[key] = {};
+
+      // Check across
+      if (ACROSS[n]) {
+        const word = ACROSS[n].word;
+        let positions = [];
+        for (let i = 0; i < word.length; i++) {
+          positions.push({r, c: c+i});
+          const k = `${r},${c+i}`;
+          if (!wordMap[k]) wordMap[k] = {};
+          if (!wordMap[k].A) wordMap[k].A = n;
+        }
+        clueWords[`A${n}`] = positions;
+      }
+      // Check down
+      if (DOWN[n]) {
+        const word = DOWN[n].word;
+        let positions = [];
+        for (let i = 0; i < word.length; i++) {
+          positions.push({r: r+i, c});
+          const k = `${r+i},${c}`;
+          if (!wordMap[k]) wordMap[k] = {};
+          if (!wordMap[k].D) wordMap[k].D = n;
+        }
+        clueWords[`D${n}`] = positions;
+      }
+    }
+  }
+}
+
+function buildGrid() {
+  const grid = document.getElementById('grid');
+  grid.style.gridTemplateColumns = `repeat(${COLS}, var(--cell))`;
+  grid.style.gridTemplateRows = `repeat(${ROWS}, var(--cell))`;
+
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const div = document.createElement('div');
+      div.className = 'cell';
+      const data = GRID_DATA[r][c];
+
+      if (data) {
+        div.className = 'cell white';
+        div.dataset.r = r;
+        div.dataset.c = c;
+
+        if (data.num) {
+          const num = document.createElement('span');
+          num.className = 'num';
+          num.textContent = data.num;
+          div.appendChild(num);
+        }
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.maxLength = 1;
+        input.autocomplete = 'off';
+        input.dataset.r = r;
+        input.dataset.c = c;
+        div.appendChild(input);
+
+        input.addEventListener('click', () => { handleCellClick(r, c); });
+        input.addEventListener('keydown', (e) => handleKey(e, r, c));
+
+        cells[`${r},${c}`] = {div, input, letter: data.letter};
+      }
+      grid.appendChild(div);
+    }
+  }
+}
+
+function handleCellClick(r, c) {
+  const key = `${r},${c}`;
+  const wm = wordMap[key] || {};
+
+  if (activeCell === key) {
+    // Toggle direction
+    if (wm.A && wm.D) {
+      activeDir = activeDir === 'A' ? 'D' : 'A';
+    }
+  } else {
+    activeCell = key;
+    // Pick direction: prefer current dir if available
+    if (wm[activeDir]) {
+      // keep current dir
+    } else if (wm.A) {
+      activeDir = 'A';
+    } else if (wm.D) {
+      activeDir = 'D';
+    }
+  }
+  highlight();
+  updateClueBar();
+}
+
+function handleKey(e, r, c) {
+  const key = `${r},${c}`;
+
+  if (e.key === 'ArrowRight') { e.preventDefault(); activeDir='A'; moveTo(r, c+1); }
+  else if (e.key === 'ArrowLeft') { e.preventDefault(); activeDir='A'; moveTo(r, c-1); }
+  else if (e.key === 'ArrowDown') { e.preventDefault(); activeDir='D'; moveTo(r+1, c); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); activeDir='D'; moveTo(r-1, c); }
+  else if (e.key === 'Tab') {
+    e.preventDefault();
+    e.shiftKey ? prevWord() : nextWord();
+  }
+  else if (e.key === 'Backspace' || e.key === 'Delete') {
+    e.preventDefault();
+    const inp = cells[key]?.input;
+    if (inp && inp.value) {
+      inp.value = '';
+      clearCellState(key);
+    } else {
+      moveBack(r, c);
+    }
+  }
+  else if (e.key === 'Enter') {
+    e.preventDefault();
+    activeDir = activeDir === 'A' ? 'D' : 'A';
+    const wm = wordMap[key] || {};
+    if (!wm[activeDir]) activeDir = activeDir === 'A' ? 'D' : 'A';
+    highlight();
+    updateClueBar();
+  }
+  else if (e.key.length === 1 && /[a-zA-Z]/.test(e.key)) {
+    e.preventDefault();
+    const inp = cells[key]?.input;
+    if (inp) {
+      inp.value = e.key.toUpperCase();
+      clearCellState(key);
+      moveForward(r, c);
+      checkComplete();
+    }
+  }
+}
+
+
+
+function clearCellState(key) {
+  const cell = cells[key];
+  if (!cell) return;
+  cell.div.classList.remove('correct','wrong');
+}
+
+function moveTo(r, c) {
+  const key = `${r},${c}`;
+  if (!cells[key]) return;
+  activeCell = key;
+  highlight();
+  updateClueBar();
+  cells[key].input.focus();
+}
+
+function moveForward(r, c) {
+  if (activeDir === 'A') moveTo(r, c+1);
+  else moveTo(r+1, c);
+}
+
+function moveBack(r, c) {
+  if (activeDir === 'A') moveTo(r, c-1);
+  else moveTo(r-1, c);
+}
+
+function getActiveClueNum() {
+  if (!activeCell) return null;
+  const wm = wordMap[activeCell] || {};
+  return wm[activeDir] || null;
+}
+
+function getActiveWordCells() {
+  const n = getActiveClueNum();
+  if (!n) return [];
+  return clueWords[`${activeDir}${n}`] || [];
+}
+
+function highlight() {
+  // Clear all
+  Object.values(cells).forEach(({div}) => {
+    div.classList.remove('highlighted','active');
+  });
+
+  const wordCells = getActiveWordCells();
+  wordCells.forEach(({r,c}) => {
+    const k = `${r},${c}`;
+    cells[k]?.div.classList.add('highlighted');
+  });
+
+  if (activeCell) {
+    cells[activeCell]?.div.classList.add('active');
+    cells[activeCell]?.div.classList.remove('highlighted');
+    cells[activeCell]?.input.focus();
+  }
+}
+
+function updateClueBar() {
+  const n = getActiveClueNum();
+  const tag = document.getElementById('bar-tag');
+  const clueEl = document.getElementById('bar-clue');
+
+  if (!n) {
+    tag.textContent = 'Select a cell';
+    clueEl.textContent = 'Click any cell to begin';
+    clueEl.className = 'clue-text empty';
+    return;
+  }
+
+  const clueData = activeDir === 'A' ? ACROSS[n] : DOWN[n];
+  tag.textContent = `${n} ${activeDir === 'A' ? 'Across' : 'Down'}`;
+  clueEl.textContent = clueData ? clueData.clue : '';
+  clueEl.className = 'clue-text';
+
+  // Highlight clue in list
+  document.querySelectorAll('.clue-item').forEach(el => el.classList.remove('active'));
+  const activeClue = document.getElementById(`clue-${activeDir}-${n}`);
+  if (activeClue) {
+    activeClue.classList.add('active');
+    activeClue.scrollIntoView({block:'nearest', behavior:'smooth'});
+  }
+}
+
+function buildClueLists() {
+  const aList = document.getElementById('across-list');
+  const dList = document.getElementById('down-list');
+
+  Object.entries(ACROSS).sort((a,b) => +a[0]-+b[0]).forEach(([n, {clue}]) => {
+    const div = document.createElement('div');
+    div.className = 'clue-item';
+    div.id = `clue-A-${n}`;
+    div.innerHTML = `<span class="clue-num">${n}A</span><span class="clue-txt">${clue}</span>`;
+    div.addEventListener('click', () => {
+      activeDir = 'A';
+      const pos = clueWords[`A${n}`]?.[0];
+      if (pos) { activeCell = `${pos.r},${pos.c}`; highlight(); updateClueBar(); }
+    });
+    aList.appendChild(div);
+  });
+
+  Object.entries(DOWN).sort((a,b) => +a[0]-+b[0]).forEach(([n, {clue}]) => {
+    const div = document.createElement('div');
+    div.className = 'clue-item';
+    div.id = `clue-D-${n}`;
+    div.innerHTML = `<span class="clue-num">${n}D</span><span class="clue-txt">${clue}</span>`;
+    div.addEventListener('click', () => {
+      activeDir = 'D';
+      const pos = clueWords[`D${n}`]?.[0];
+      if (pos) { activeCell = `${pos.r},${pos.c}`; highlight(); updateClueBar(); }
+    });
+    dList.appendChild(div);
+  });
+}
+
+function nextWord() {
+  const allWords = [
+    ...Object.keys(ACROSS).sort((a,b)=>+a-+b).map(n=>`A${n}`),
+    ...Object.keys(DOWN).sort((a,b)=>+a-+b).map(n=>`D${n}`)
+  ];
+  const current = `${activeDir}${getActiveClueNum()}`;
+  const idx = allWords.indexOf(current);
+  const next = allWords[(idx+1) % allWords.length];
+  jumpToWord(next);
+}
+
+function prevWord() {
+  const allWords = [
+    ...Object.keys(ACROSS).sort((a,b)=>+a-+b).map(n=>`A${n}`),
+    ...Object.keys(DOWN).sort((a,b)=>+a-+b).map(n=>`D${n}`)
+  ];
+  const current = `${activeDir}${getActiveClueNum()}`;
+  const idx = allWords.indexOf(current);
+  const prev = allWords[(idx-1+allWords.length) % allWords.length];
+  jumpToWord(prev);
+}
+
+function jumpToWord(key) {
+  activeDir = key[0];
+  const n = key.slice(1);
+  const pos = clueWords[key]?.[0];
+  if (pos) { activeCell = `${pos.r},${pos.c}`; highlight(); updateClueBar(); }
+}
+
+function checkAll() {
+  let correct = 0, total = 0;
+  Object.entries(cells).forEach(([key, {input, letter, div}]) => {
+    if (input.value) {
+      total++;
+      if (input.value.toUpperCase() === letter) {
+        div.classList.add('correct');
+        div.classList.remove('wrong');
+        correct++;
+      } else {
+        div.classList.add('wrong');
+        div.classList.remove('correct');
+      }
+    }
+  });
+  const score = document.getElementById('score');
+  score.textContent = total ? `${correct}/${total} correct` : '';
+  checkComplete();
+}
+
+function revealWord() {
+  const wordCells = getActiveWordCells();
+  wordCells.forEach(({r,c}) => {
+    const k = `${r},${c}`;
+    const cell = cells[k];
+    if (cell) {
+      cell.input.value = cell.letter;
+      cell.div.classList.add('correct');
+      cell.div.classList.remove('wrong');
+    }
+  });
+  markWordSolved();
+  checkComplete();
+}
+
+function markWordSolved() {
+  const n = getActiveClueNum();
+  if (!n) return;
+  const el = document.getElementById(`clue-${activeDir}-${n}`);
+  if (el) el.classList.add('solved');
+}
+
+function clearAll() {
+  Object.values(cells).forEach(({input, div}) => {
+    input.value = '';
+    div.classList.remove('correct','wrong');
+  });
+  document.querySelectorAll('.clue-item').forEach(el => el.classList.remove('solved'));
+  document.getElementById('score').textContent = '';
+  document.getElementById('congrats').classList.remove('show');
+}
+
+function checkComplete() {
+  const allFilled = Object.values(cells).every(({input}) => input.value);
+  const allCorrect = Object.values(cells).every(({input, letter}) =>
+    input.value.toUpperCase() === letter
+  );
+  if (allFilled && allCorrect) {
+    document.getElementById('congrats').classList.add('show');
+    document.getElementById('congrats').scrollIntoView({behavior:'smooth'});
+  }
+}
+
+// Init
+buildWordMap();
+buildGrid();
+buildClueLists();
+
+// Click first cell
+const firstKey = Object.keys(cells)[0];
+if (firstKey) {
+  activeCell = firstKey;
+  activeDir = 'A';
+  highlight();
+  updateClueBar();
+}
+</script>
+</body>
+</html>
