@@ -103,6 +103,13 @@ button{font-family:'Barlow Condensed',sans-serif;font-size:0.9rem;font-weight:60
 @media(max-width:900px){:root{--cell:28px;}.main{flex-direction:column;padding:0.8rem;gap:1rem;}.clues-panel{max-height:none;}.clue-txt{font-size:0.78rem;}}
 @media(max-width:600px){:root{--cell:22px;}.cell.white .num{font-size:6px;}.hero-img{width:80px;height:80px;}}
 </style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-MZJQNP5PGG"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-MZJQNP5PGG');
+</script>
 </head>
 <body>
 
@@ -158,9 +165,9 @@ button{font-family:'Barlow Condensed',sans-serif;font-size:0.9rem;font-weight:60
       <p class="oco-pillars" id="oco-pillars"></p>
       <p class="oco-tagline-small" id="oco-small"></p>
       <div class="popup-badges" id="oco-badges" style="opacity:0;">
-        <a class="popup-badge badge-ios" href="https://apps.apple.com/in/app/orucupoxygen/id6758971206" target="_blank">App Store</a>
-        <a class="popup-badge badge-android" href="https://play.google.com/store/apps/details?id=com.orucupoxygen.app" target="_blank">Google Play</a>
-        <a class="popup-badge badge-web" href="https://orucupoxygen.com" target="_blank">Visit Website</a>
+        <a class="popup-badge badge-ios" href="https://apps.apple.com/in/app/orucupoxygen/id6758971206" target="_blank" onclick="trackEvent('oco_cta_click',{destination:'app_store'})">App Store</a>
+        <a class="popup-badge badge-android" href="https://play.google.com/store/apps/details?id=com.orucupoxygen.app" target="_blank" onclick="trackEvent('oco_cta_click',{destination:'google_play'})">Google Play</a>
+        <a class="popup-badge badge-web" href="https://orucupoxygen.com" target="_blank" onclick="trackEvent('oco_cta_click',{destination:'website'})">Visit Website</a>
       </div>
       <button class="popup-share-btn" onclick="shareCompleted()">&#8599; Share your achievement</button>
     </div>
@@ -172,6 +179,22 @@ const ROWS=20,COLS=19;
 const GRID_DATA=[[null,null,{"letter":"M","num":1},null,null,null,null,null,{"letter":"T","num":2},{"letter":"H","num":0},{"letter":"A","num":0},{"letter":"N","num":0},{"letter":"G","num":3},{"letter":"A","num":0},{"letter":"M","num":4},{"letter":"A","num":0},{"letter":"G","num":5},{"letter":"A","num":0},{"letter":"N","num":6}],[null,null,{"letter":"A","num":0},null,null,null,null,null,{"letter":"H","num":0},null,null,null,{"letter":"A","num":0},null,{"letter":"A","num":0},null,{"letter":"U","num":0},null,{"letter":"A","num":0}],[{"letter":"P","num":7},{"letter":"A","num":0},{"letter":"N","num":0},{"letter":"A","num":0},{"letter":"K","num":0},{"letter":"K","num":8},{"letter":"A","num":0},{"letter":"R","num":0},{"letter":"A","num":0},{"letter":"N","num":0},null,null,{"letter":"Y","num":0},null,{"letter":"P","num":0},null,{"letter":"R","num":0},null,{"letter":"A","num":0}],[{"letter":"O","num":0},null,{"letter":"I","num":0},null,null,{"letter":"A","num":0},null,null,{"letter":"L","num":0},null,null,null,{"letter":"A","num":0},null,{"letter":"P","num":0},null,{"letter":"U","num":0},null,{"letter":"N","num":0}],[{"letter":"L","num":0},null,{"letter":"T","num":0},null,{"letter":"M","num":9},{"letter":"A","num":0},{"letter":"N","num":0},{"letter":"N","num":0},{"letter":"A","num":0},{"letter":"N","num":0},null,null,{"letter":"T","num":0},null,{"letter":"I","num":0},null,{"letter":"S","num":0},null,{"letter":"A","num":0}],[{"letter":"L","num":0},null,{"letter":"H","num":0},null,null,{"letter":"L","num":0},null,null,{"letter":"P","num":0},null,null,null,{"letter":"H","num":0},null,{"letter":"L","num":0},null,{"letter":"I","num":0},null,{"letter":"D","num":0}],[{"letter":"A","num":0},null,{"letter":"A","num":0},null,null,{"letter":"I","num":0},null,{"letter":"B","num":10},{"letter":"A","num":0},{"letter":"B","num":0},{"letter":"A","num":0},null,{"letter":"R","num":0},null,{"letter":"L","num":0},null,{"letter":"S","num":0},null,{"letter":"I","num":0}],[{"letter":"D","num":0},null,{"letter":"N","num":0},null,null,null,null,null,{"letter":"T","num":0},null,null,null,{"letter":"I","num":0},null,{"letter":"A","num":0},null,{"letter":"H","num":0},null,{"letter":"M","num":0}],[{"letter":"H","num":0},null,null,{"letter":"R","num":11},null,null,null,null,{"letter":"H","num":0},null,null,null,null,null,{"letter":"I","num":0},null,{"letter":"Y","num":0},null,{"letter":"A","num":0}],[{"letter":"A","num":0},null,{"letter":"R","num":12},{"letter":"A","num":0},{"letter":"J","num":0},{"letter":"A","num":0},{"letter":"T","num":0},{"letter":"H","num":0},{"letter":"I","num":0},{"letter":"R","num":0},{"letter":"A","num":0},{"letter":"J","num":13},{"letter":"A","num":0},null,null,null,{"letter":"A","num":0},null,{"letter":"I","num":0}],[{"letter":"V","num":0},null,null,{"letter":"N","num":0},null,null,null,null,null,null,null,{"letter":"O","num":0},null,null,null,null,{"letter":"N","num":0},null,{"letter":"I","num":0}],[{"letter":"A","num":0},null,null,{"letter":"U","num":0},null,null,null,null,null,null,null,{"letter":"H","num":0},null,null,null,null,null,null,{"letter":"L","num":0}],[{"letter":"N","num":0},null,null,{"letter":"V","num":0},null,{"letter":"V","num":14},{"letter":"E","num":0},{"letter":"E","num":0},{"letter":"R","num":0},{"letter":"A","num":0},null,{"letter":"N","num":0},null,null,null,null,null,null,{"letter":"L","num":0}],[null,null,null,{"letter":"A","num":0},null,null,null,null,null,null,null,{"letter":"N","num":0},null,null,{"letter":"P","num":15},{"letter":"E","num":0},{"letter":"T","num":16},{"letter":"T","num":0},{"letter":"A","num":0}],[{"letter":"M","num":17},{"letter":"A","num":0},{"letter":"A","num":0},{"letter":"V","num":0},{"letter":"E","num":0},{"letter":"E","num":0},{"letter":"R","num":0},{"letter":"A","num":0},{"letter":"N","num":0},null,null,{"letter":"Y","num":0},null,null,null,null,{"letter":"Y","num":0},null,{"letter":"I","num":0}],[{"letter":"U","num":0},null,null,{"letter":"E","num":0},null,null,null,null,null,null,{"letter":"V","num":18},null,null,null,null,null,{"letter":"A","num":0},null,null],[{"letter":"T","num":19},{"letter":"H","num":0},{"letter":"E","num":0},{"letter":"E","num":0},null,null,null,null,null,{"letter":"B","num":20},{"letter":"A","num":0},{"letter":"A","num":0},{"letter":"S","num":21},{"letter":"H","num":0},{"letter":"A","num":0},null,{"letter":"G","num":0},null,null],[{"letter":"H","num":0},null,null,{"letter":"R","num":0},null,null,{"letter":"H","num":22},null,null,null,{"letter":"L","num":0},null,{"letter":"I","num":0},null,null,null,{"letter":"I","num":0},null,null],[{"letter":"U","num":0},null,null,{"letter":"A","num":0},null,null,{"letter":"U","num":0},null,null,null,{"letter":"L","num":0},null,{"letter":"V","num":0},null,null,null,null,null,null],[null,null,{"letter":"A","num":23},{"letter":"N","num":0},{"letter":"N","num":0},{"letter":"A","num":0},{"letter":"M","num":0},{"letter":"A","num":0},{"letter":"L","num":0},{"letter":"A","num":0},{"letter":"I","num":0},null,{"letter":"A","num":24},{"letter":"N","num":0},{"letter":"N","num":0},{"letter":"A","num":0},{"letter":"T","num":0},{"letter":"H","num":0},{"letter":"E","num":0}]];
 const ACROSS={"2":{"word":"THANGAMAGAN","clue":"A movie album with super duper hits. One of the songs from this was remixed for his latest movie. (6,5)"},"7":{"word":"PANAKKARAN","clue":"Knock off everyone before the beedi burns out (10)"},"9":{"word":"MANNAN","clue":"Remake of a kannada movie. He was not just an actor in this. Took a new avatar as a singer. (6)"},"10":{"word":"BABA","clue":"Bakthi vs politics. 7 boons and a dash with the goons. (4)"},"12":{"word":"RAJATHIRAJA","clue":"Lookalikes interchange. Rajasekhar or Chinraasu? Irrespective it is a Raja treat. (7,4)"},"14":{"word":"VEERA","clue":"Journey of a supersinger, from a village to a stage. (5)"},"15":{"word":"PETTA","clue":"A tribute to the 90s Superstar from a fanboy director (5)"},"17":{"word":"MAAVEERAN","clue":"Remake of a hindi movie, set in a pre independent India. First Tamil film to be shot in 70 mm film format and have a six-track stereophonic sound. (9)"},"19":{"word":"THEE","clue":"The original coolie in Tamil with the significant 786 (4)"},"20":{"word":"BAASHA","clue":"Rimless and ruthless in the past. Kind and responsible in the present. (6)"},"23":{"word":"ANNAMALAI","clue":"An important friendship. An iconic challenge. A transformational song. (9)"},"24":{"word":"ANNATHE","clue":"Search for a sister, with a green parrot as a sidekick. (7)"}};
 const DOWN={"1":{"word":"MANITHAN","clue":"A man who is cast out as unlucky, goes to destroy the villains wearing the ultimate leather jacket with hooks for bombs. (8)"},"2":{"word":"THALAPATHI","clue":"Son of Sun. Search for a mother, ends up finding 2 brothers, one through blood and one of blood. (10)"},"3":{"word":"GAYATHRI","clue":"A full on negative shade. A wolf who records everything secretly. Even his wife. (8)"},"4":{"word":"MAPPILLAI","clue":"His first pair became his mother in law (9)"},"5":{"word":"GURUSISHYAN","clue":"A comic caper, with an indiana jonesesque climax in a golden cave. (4,7)"},"6":{"word":"NAANADIMAIILLAI","clue":"Photographer separates from his wife. The last time Parattai paired with Mayil in Tamil. (4,6,5)"},"7":{"word":"POLLADHAVAN","clue":"She knows he is the killer. But she cannot reveal it. Superstar with a beard and his trademark style in a thriller - written by Salim Javed primarily for the south. (11)"},"8":{"word":"KAALI","clue":"Joined hands with Chiranjeevi (for the Telugu version) in this Bilingual, written by Mahendran. (5)"},"11":{"word":"RANUVAVEERAN","clue":"If superstar is the hero and megastar is the villain, what more do you want? (6,6)"},"13":{"word":"JOHNNY","clue":"Miser barber and a wiser thief. A double action thriller from Mahendran with evergreen music. (6)"},"16":{"word":"TYAGI","clue":"Hindi version of his tamil blockbuster. A naive man, fooled by his brothers. You can put a price tag to his attire, but not to him. (5)"},"17":{"word":"MUTHU","clue":"Boss becomes servant, still rides a chariot and dances in Kulu valley. (5)"},"18":{"word":"VALLI","clue":"Drapes his wife's saree around the waist and plays a guitar. He was not just an actor, he wrote the story as well. (5)"},"21":{"word":"SIVA","clue":"Tiger fights a tiger. Becomes a devadas in a song searching for his Parvathi. (4)"},"22":{"word":"HUM","clue":"There were so many stars that it was a constellation in this Hindi movie. The seed for a tamil blockbuster. Even if you dont know the name, can you Jumma guess, I mean Chumma guess? (3)"}};
+
+
+// ── ANALYTICS ──────────────────────────────────────────
+let crosswordStarted = false;
+
+function trackEvent(name, params) {
+  if (typeof gtag !== 'undefined') gtag('event', name, params);
+}
+
+function trackStart() {
+  if (!crosswordStarted) {
+    crosswordStarted = true;
+    trackEvent('crossword_start', { event_category: 'crossword' });
+  }
+}
+// ───────────────────────────────────────────────────────
 
 let activeCell=null,activeDir='A',cells={},wordMap={},clueWords={};
 
@@ -194,7 +217,7 @@ function buildGrid(){
       if(data.num){const s=document.createElement('span');s.className='num';s.textContent=data.num;div.appendChild(s);}
       const inp=document.createElement('input');
       inp.type='text';inp.autocomplete='off';inp.autocorrect='off';inp.autocapitalize='characters';inp.spellcheck=false;
-      inp.addEventListener('click',(e)=>{e.preventDefault();handleCellClick(r,c);focusNoScroll(inp);});
+      inp.addEventListener('click',(e)=>{e.preventDefault();trackStart();handleCellClick(r,c);focusNoScroll(inp);});
       inp.addEventListener('keydown',(e)=>handleKey(e,r,c));
       inp.addEventListener('input',()=>{
         const val=inp.value.replace(/[^a-zA-Z]/gi,'').toUpperCase();
@@ -252,6 +275,7 @@ function updateClueBar(){
   if(!n){tag.textContent='Select a cell';cl.textContent='Click any cell to begin';cl.className='clue-text empty';return;}
   const cd=activeDir==='A'?ACROSS[n]:DOWN[n];
   tag.textContent=`${n} ${activeDir==='A'?'Across':'Down'}`;cl.textContent=cd?cd.clue:'';cl.className='clue-text';
+  trackEvent('clue_selected',{clue_number:n,direction:activeDir==='A'?'Across':'Down',film:cd?cd.word:''});
   document.querySelectorAll('.clue-item').forEach(el=>el.classList.remove('active'));
   const ac=document.getElementById(`clue-${activeDir}-${n}`);
   if(ac){ac.classList.add('active');const p=document.querySelector('.clues-panel');if(p)p.scrollTo({top:ac.offsetTop-p.offsetTop-40,behavior:'smooth'});}
@@ -286,11 +310,11 @@ function checkAll(){
   Object.entries(cells).forEach(([k,{input,letter,div}])=>{
     if(input.value){tot++;if(input.value.toUpperCase()===letter){div.classList.add('correct');div.classList.remove('wrong');ok++;}else{div.classList.add('wrong');div.classList.remove('correct');}}
   });
-  document.getElementById('score').textContent=tot?`${ok}/${tot} correct`:'';checkComplete();
+  document.getElementById('score').textContent=tot?`${ok}/${tot} correct`:'';trackEvent('check_answers',{correct:ok,total:tot,score_pct:tot?Math.round(ok/tot*100):0});checkComplete();
 }
 function revealWord(){
   getAWC().forEach(({r,c})=>{const cell=cells[`${r},${c}`];if(cell){cell.input.value=cell.letter;cell.div.classList.add('correct');cell.div.classList.remove('wrong');}});
-  const n=getACN();if(n)document.getElementById(`clue-${activeDir}-${n}`)?.classList.add('solved');checkComplete();
+  const n=getACN();if(n){document.getElementById(`clue-${activeDir}-${n}`)?.classList.add('solved');const cd=activeDir==='A'?ACROSS[n]:DOWN[n];trackEvent('reveal_word',{clue_number:n,direction:activeDir==='A'?'Across':'Down',film:cd?cd.word:''});}checkComplete();
 }
 function clearAll(){
   Object.values(cells).forEach(({input,div})=>{input.value='';div.classList.remove('correct','wrong');});
@@ -305,7 +329,7 @@ function revealAll(){
 }
 function checkComplete(){
   const ok=Object.values(cells).every(({input,letter})=>input.value.trim().toUpperCase()===letter.toUpperCase());
-  if(ok){document.getElementById('congrats').classList.add('show');setTimeout(()=>{document.getElementById('popup-overlay').classList.add('show');startRevealSequence();},600);}
+  if(ok){trackEvent('crossword_complete',{event_category:'crossword'});document.getElementById('congrats').classList.add('show');setTimeout(()=>{document.getElementById('popup-overlay').classList.add('show');startRevealSequence();},600);}
 }
 
 function resetStages(){
@@ -344,8 +368,8 @@ function showOCOStage(){
   },100);
 }
 
-function shareMidSolve(){window.open('https://wa.me/?text='+encodeURIComponent("I'm solving the Rajinikanth Movie Crossword — 27 films hidden in one puzzle. Try it!\nhttps://rajinikanth.orucupoxygen.com"),'_blank');}
-function shareCompleted(){window.open('https://wa.me/?text='+encodeURIComponent("I just solved the Rajinikanth Movie Crossword — all 27 films, zero hints. Can you? 🎬\nhttps://rajinikanth.orucupoxygen.com"),'_blank');}
+function shareMidSolve(){trackEvent('share_click',{share_type:'mid_solve'});window.open('https://wa.me/?text='+encodeURIComponent("I'm solving the Rajinikanth Movie Crossword — 27 films hidden in one puzzle. Try it!\nhttps://rajinikanth.orucupoxygen.com"),'_blank');}
+function shareCompleted(){trackEvent('share_click',{share_type:'post_solve'});window.open('https://wa.me/?text='+encodeURIComponent("I just solved the Rajinikanth Movie Crossword — all 27 films, zero hints. Can you? 🎬\nhttps://rajinikanth.orucupoxygen.com"),'_blank');}
 
 document.getElementById('popup-overlay').addEventListener('click',function(e){if(e.target===this)closePopup();});
 
