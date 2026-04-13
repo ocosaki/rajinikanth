@@ -547,6 +547,39 @@
     transition: opacity 0.8s ease;
   }
   #oco-badges.visible { opacity: 1 !important; }
+
+  /* SHARE BUTTON */
+  .btn-share {
+    background: transparent;
+    color: var(--gold);
+    border: 1.5px solid var(--gold);
+    display: none;
+  }
+  .btn-share.visible { display: inline-block; }
+  .btn-share:hover { background: #1a1400; }
+
+  .popup-share-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    margin-top: 1rem;
+    padding: 0.6rem 1rem;
+    background: transparent;
+    border: 1.5px solid var(--gold);
+    border-radius: 3px;
+    color: var(--gold);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .popup-share-btn:hover { background: #1a1400; }
+  .share-icon { font-size: 1rem; }
 </style>
 </head>
 <body>
@@ -556,7 +589,7 @@
     <img src="Rajinikanth.jpeg" alt="Rajinikanth" class="hero-img">
     <div class="header-text">
       <h1>Rajinikanth</h1>
-      <p class="subtitle">The Films — A Crossword</p>
+      <p class="subtitle">A Movie Crossword</p>
       <p class="challenge">Can you find all <span>27</span> of his films hidden in this crossword?</p>
     </div>
   </div>
@@ -725,6 +758,7 @@ function buildGrid() {
           // Take the last character typed
           input.value = val[val.length - 1];
           clearCellState(`${r},${c}`);
+          showShareButton();
           moveForward(r, c);
           checkComplete();
         });
@@ -793,7 +827,7 @@ function handleKey(e, r, c) {
     // Let the input event handle it - just clear the field first
     // so input event sees only the new character
     const inp = cells[key]?.input;
-    if (inp) inp.value = '';
+    if (inp) { inp.value = ''; showShareButton(); }
   }
 }
 
@@ -1119,6 +1153,83 @@ document.getElementById('popup-overlay')?.addEventListener('click', function(e) 
   if (e.target === this) closePopup();
 });
 
+
+// Show share button after first input
+function showShareButton() {
+  document.getElementById('btn-share-main')?.classList.add('visible');
+}
+
+async function shareMidSolve() {
+  const shareData = {
+    title: 'Rajinikanth Movie Crossword',
+    text: "I'm solving the Rajinikanth Movie Crossword — 27 films hidden in one puzzle. Try it!\nrajinikanth.orucupoxygen.com",
+    url: 'https://rajinikanth.orucupoxygen.com'
+  };
+  await doShare(shareData);
+}
+
+async function shareCompleted() {
+  const shareData = {
+    title: 'Rajinikanth Movie Crossword',
+    text: "I just solved the Rajinikanth Movie Crossword — all 27 films, zero hints. Can you? 🎬\nrajinikanth.orucupoxygen.com",
+    url: 'https://rajinikanth.orucupoxygen.com'
+  };
+  await doShare(shareData);
+}
+
+async function doShare(shareData) {
+  // Try Web Share API with image first (mobile)
+  if (navigator.share) {
+    try {
+      // Try to fetch and include the share image
+      try {
+        const response = await fetch('Rajnishare.jpeg');
+        const blob = await response.blob();
+        const file = new File([blob], 'Rajnishare.jpeg', { type: 'image/jpeg' });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({ ...shareData, files: [file] });
+          return;
+        }
+      } catch(e) {}
+      // Share without image if image fetch fails
+      await navigator.share(shareData);
+    } catch(e) {
+      if (e.name !== 'AbortError') fallbackShare(shareData);
+    }
+  } else {
+    fallbackShare(shareData);
+  }
+}
+
+function fallbackShare(shareData) {
+  // Desktop fallback - copy to clipboard
+  const text = shareData.text + '\n' + shareData.url;
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('Link copied to clipboard!');
+  }).catch(() => {
+    showToast('Visit: rajinikanth.orucupoxygen.com');
+  });
+}
+
+function showToast(msg) {
+  const toast = document.createElement('div');
+  toast.textContent = msg;
+  toast.style.cssText = `
+    position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+    background: var(--gold); color: var(--black);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.9rem; font-weight: 600; letter-spacing: 0.05em;
+    padding: 0.6rem 1.4rem; border-radius: 3px;
+    z-index: 9999; opacity: 0; transition: opacity 0.3s;
+  `;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.style.opacity = '1', 10);
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    setTimeout(() => toast.remove(), 300);
+  }, 2500);
+}
+
 // Init
 buildWordMap();
 buildGrid();
@@ -1153,6 +1264,9 @@ buildClueLists();
         <a class="popup-badge badge-android" href="https://play.google.com/store/apps/details?id=com.orucupoxygen.app" target="_blank">Google Play</a>
         <a class="popup-badge badge-web" href="https://orucupoxygen.com" target="_blank">Visit Website</a>
       </div>
+      <button class="popup-share-btn" onclick="shareCompleted()">
+        <span class="share-icon">&#8599;</span> Share your achievement
+      </button>
     </div>
   </div>
 </div>
