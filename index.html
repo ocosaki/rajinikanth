@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta property="og:title" content="Rajinikanth Crossword — Can you find all 27 films?">
 <meta property="og:description" content="Test your knowledge of the Superstar's films. 27 Rajinikanth movies hidden in one crossword.">
-<meta property="og:image" content="https://rajini.orucupoxygen.com/Rajinikanth.jpeg">
+<meta property="og:image" content="https://rajinikanth.orucupoxygen.com/Rajnishare.jpeg">
 <meta property="og:url" content="https://rajini.orucupoxygen.com">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
@@ -553,9 +553,8 @@
     background: transparent;
     color: var(--gold);
     border: 1.5px solid var(--gold);
-    display: none;
+    display: inline-block;
   }
-  .btn-share.visible { display: inline-block; }
   .btn-share:hover { background: #1a1400; }
 
   .popup-share-btn {
@@ -758,7 +757,6 @@ function buildGrid() {
           // Take the last character typed
           input.value = val[val.length - 1];
           clearCellState(`${r},${c}`);
-          showShareButton();
           moveForward(r, c);
           checkComplete();
         });
@@ -827,7 +825,7 @@ function handleKey(e, r, c) {
     // Let the input event handle it - just clear the field first
     // so input event sees only the new character
     const inp = cells[key]?.input;
-    if (inp) { inp.value = ''; showShareButton(); }
+    if (inp) { inp.value = ''; }
   }
 }
 
@@ -1154,12 +1152,7 @@ document.getElementById('popup-overlay')?.addEventListener('click', function(e) 
 });
 
 
-// Show share button after first input
-function showShareButton() {
-  document.getElementById('btn-share-main')?.classList.add('visible');
-}
-
-async function shareMidSolve() {
+function shareMidSolve() {
   const shareData = {
     title: 'Rajinikanth Movie Crossword',
     text: "I'm solving the Rajinikanth Movie Crossword — 27 films hidden in one puzzle. Try it!\nrajinikanth.orucupoxygen.com",
@@ -1168,7 +1161,7 @@ async function shareMidSolve() {
   await doShare(shareData);
 }
 
-async function shareCompleted() {
+function shareCompleted() {
   const shareData = {
     title: 'Rajinikanth Movie Crossword',
     text: "I just solved the Rajinikanth Movie Crossword — all 27 films, zero hints. Can you? 🎬\nrajinikanth.orucupoxygen.com",
@@ -1177,38 +1170,10 @@ async function shareCompleted() {
   await doShare(shareData);
 }
 
-async function doShare(shareData) {
-  // Try Web Share API with image first (mobile)
-  if (navigator.share) {
-    try {
-      // Try to fetch and include the share image
-      try {
-        const response = await fetch('Rajnishare.jpeg');
-        const blob = await response.blob();
-        const file = new File([blob], 'Rajnishare.jpeg', { type: 'image/jpeg' });
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          await navigator.share({ ...shareData, files: [file] });
-          return;
-        }
-      } catch(e) {}
-      // Share without image if image fetch fails
-      await navigator.share(shareData);
-    } catch(e) {
-      if (e.name !== 'AbortError') fallbackShare(shareData);
-    }
-  } else {
-    fallbackShare(shareData);
-  }
-}
-
-function fallbackShare(shareData) {
-  // Desktop fallback - copy to clipboard
-  const text = shareData.text + '\n' + shareData.url;
-  navigator.clipboard.writeText(text).then(() => {
-    showToast('Link copied to clipboard!');
-  }).catch(() => {
-    showToast('Visit: rajinikanth.orucupoxygen.com');
-  });
+function doShare(shareData) {
+  const text = encodeURIComponent(shareData.text + '\n' + shareData.url);
+  const waUrl = 'https://wa.me/?text=' + text;
+  window.open(waUrl, '_blank');
 }
 
 function showToast(msg) {
