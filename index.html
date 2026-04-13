@@ -703,7 +703,7 @@ function buildGrid() {
 
         const input = document.createElement('input');
         input.type = 'text';
-        input.maxLength = 1;
+        
         input.autocomplete = 'off';
         input.dataset.r = r;
         input.dataset.c = c;
@@ -715,7 +715,19 @@ function buildGrid() {
           focusNoScroll(input);
         });
         input.addEventListener('keydown', (e) => handleKey(e, r, c));
-        input.addEventListener('input', (e) => handleMobileInput(e, r, c));
+        input.addEventListener('input', (e) => {
+          const val = input.value.replace(/[^a-zA-Z]/gi, '').toUpperCase();
+          if (val.length === 0) {
+            input.value = '';
+            clearCellState(`${r},${c}`);
+            return;
+          }
+          // Take the last character typed
+          input.value = val[val.length - 1];
+          clearCellState(`${r},${c}`);
+          moveForward(r, c);
+          checkComplete();
+        });
 
         cells[`${r},${c}`] = {div, input, letter: data.letter};
       }
@@ -778,16 +790,10 @@ function handleKey(e, r, c) {
     updateClueBar();
   }
   else if (e.key.length === 1 && /[a-zA-Z]/.test(e.key)) {
-    e.preventDefault();
+    // Let the input event handle it - just clear the field first
+    // so input event sees only the new character
     const inp = cells[key]?.input;
-    if (inp) {
-      inp.dataset.keyhandled = '1';
-      inp.value = e.key.toUpperCase();
-      clearCellState(key);
-      moveForward(r, c);
-      checkComplete();
-      setTimeout(() => { inp.dataset.keyhandled = '0'; }, 50);
-    }
+    if (inp) inp.value = '';
   }
 }
 
