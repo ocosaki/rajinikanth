@@ -463,19 +463,31 @@
   .badge-web:hover { color: var(--white); border-color: #888; }
 
   /* REVEAL SEQUENCE */
+  .popup-highlight {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+    display: block;
+    margin-top: 0.4rem;
+  }
   .reveal-stage { transition: opacity 0.6s ease; }
 
   .bridge-line {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 1.1rem;
-    letter-spacing: 0.25em;
-    color: #888;
-    text-transform: uppercase;
-    min-height: 2rem;
+    font-family: 'Barlow', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 400;
+    font-style: italic;
+    letter-spacing: 0.02em;
+    color: var(--white);
+    min-height: 3rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 1rem 0;
+    text-align: center;
+    margin: 2rem 1rem;
+    line-height: 1.6;
   }
 
   .oco-logo-reveal {
@@ -1017,7 +1029,7 @@ function startRevealSequence() {
         s2.style.opacity = '1';
         // Type out the bridge line
         const bridgeEl = document.getElementById('bridge-text');
-        const bridgeText = 'You clearly know your Tamil cinema';
+        const bridgeText = 'The focused mind deserves more than a scrolling feed.';
         let i = 0;
         const typer = setInterval(() => {
           bridgeEl.textContent = bridgeText.slice(0, i+1);
@@ -1031,12 +1043,12 @@ function startRevealSequence() {
                 s2.style.display = 'none';
                 showOCOStage();
               }, 600);
-            }, 1200);
+            }, 2000);
           }
-        }, 45);
+        }, 38);
       }, 100);
     }, 500);
-  }, 2500);
+  }, 4500);
 }
 
 function showOCOStage() {
@@ -1096,11 +1108,11 @@ if (firstKey) {
 <div class="popup-overlay" id="popup-overlay">
   <div class="popup">
     <button class="popup-close" onclick="closePopup()">&#x2715;</button>
-    <!-- Stage 1: Celebration -->
+    <!-- Stage 1: Celebration + Acknowledgement -->
     <div class="reveal-stage" id="stage-1">
       <div class="popup-star">&#127881;</div>
       <h2>Superstar Salute!</h2>
-      <p class="popup-sub">You found all <strong>27 Rajinikanth films</strong> in this crossword.<br>Style is everything — and so is knowing your Tamil cinema.</p>
+      <p class="popup-sub">Most people scroll past 27 things in 10 seconds.<br>You just focused long enough to find <strong>27 Rajini films</strong>.<br><br>That's a different kind of mind.<br><span class="popup-highlight">A mind that is happy to focus.</span></p>
     </div>
 
     <!-- Stage 2: Bridge -->
