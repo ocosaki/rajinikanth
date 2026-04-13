@@ -166,13 +166,15 @@
     outline: none;
     text-align: center;
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 1.1rem;
+    font-size: 16px;
     font-weight: 700;
     color: var(--black);
     text-transform: uppercase;
     cursor: pointer;
     caret-color: transparent;
     padding-top: 8px;
+    -webkit-user-select: none;
+    user-select: none;
   }
   .cell.white .num {
     position: absolute;
@@ -707,7 +709,11 @@ function buildGrid() {
         input.dataset.c = c;
         div.appendChild(input);
 
-        input.addEventListener('click', () => { handleCellClick(r, c); });
+        input.addEventListener('click', (e) => {
+          e.preventDefault();
+          handleCellClick(r, c);
+          focusNoScroll(input);
+        });
         input.addEventListener('keydown', (e) => handleKey(e, r, c));
 
         cells[`${r},${c}`] = {div, input, letter: data.letter};
@@ -796,7 +802,14 @@ function moveTo(r, c) {
   activeCell = key;
   highlight();
   updateClueBar();
-  cells[key].input.focus();
+  focusNoScroll(cells[key].input);
+}
+
+function focusNoScroll(el) {
+  // Prevent page scroll on mobile when focusing input
+  const x = window.scrollX, y = window.scrollY;
+  el.focus({ preventScroll: true });
+  window.scrollTo(x, y);
 }
 
 function moveForward(r, c) {
@@ -836,7 +849,7 @@ function highlight() {
   if (activeCell) {
     cells[activeCell]?.div.classList.add('active');
     cells[activeCell]?.div.classList.remove('highlighted');
-    cells[activeCell]?.input.focus();
+    if (cells[activeCell]?.input) focusNoScroll(cells[activeCell].input);
   }
 }
 
@@ -862,7 +875,15 @@ function updateClueBar() {
   const activeClue = document.getElementById(`clue-${activeDir}-${n}`);
   if (activeClue) {
     activeClue.classList.add('active');
-    activeClue.scrollIntoView({block:'nearest', behavior:'smooth'});
+    // Only scroll clue list, not the whole page
+  if (activeClue) {
+    const panel = document.querySelector('.clues-panel');
+    if (panel) {
+      const clueTop = activeClue.offsetTop - panel.offsetTop;
+      panel.scrollTo({ top: clueTop - 40, behavior: 'smooth' });
+    }
+  }
+  if (false) activeClue.scrollIntoView({block:'nearest', behavior:'smooth'});
   }
 }
 
@@ -1093,15 +1114,7 @@ document.getElementById('popup-overlay')?.addEventListener('click', function(e) 
 buildWordMap();
 buildGrid();
 buildClueLists();
-
-// Click first cell
-const firstKey = Object.keys(cells)[0];
-if (firstKey) {
-  activeCell = firstKey;
-  activeDir = 'A';
-  highlight();
-  updateClueBar();
-}
+// Do not auto-focus any cell on load - wait for user interaction
 </script>
 
 <!-- COMPLETION POPUP -->
