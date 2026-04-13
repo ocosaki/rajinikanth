@@ -461,6 +461,78 @@
     font-size: 0.78rem;
   }
   .badge-web:hover { color: var(--white); border-color: #888; }
+
+  /* REVEAL SEQUENCE */
+  .reveal-stage { transition: opacity 0.6s ease; }
+
+  .bridge-line {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.25em;
+    color: #888;
+    text-transform: uppercase;
+    min-height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1rem 0;
+  }
+
+  .oco-logo-reveal {
+    height: 56px;
+    width: auto;
+    display: block;
+    margin: 0 auto 1rem;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .oco-logo-reveal.visible {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .oco-name-reveal {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.4rem;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    text-shadow: 0 0 30px rgba(245,197,24,0.4);
+    margin-bottom: 0.6rem;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 0;
+    transition: width 1s ease;
+  }
+  .oco-name-reveal.visible {
+    width: 100%;
+  }
+
+  .oco-pillars {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.15em;
+    color: var(--white);
+    margin-bottom: 0.4rem;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+  }
+  .oco-pillars.visible { opacity: 1; }
+
+  .oco-tagline-small {
+    font-size: 0.78rem;
+    color: #888;
+    margin-bottom: 1.2rem;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    line-height: 1.6;
+  }
+  .oco-tagline-small.visible { opacity: 1; }
+
+  #oco-badges {
+    transition: opacity 0.8s ease;
+  }
+  #oco-badges.visible { opacity: 1 !important; }
 </style>
 </head>
 <body>
@@ -904,6 +976,7 @@ function checkComplete() {
     document.getElementById('congrats').classList.add('show');
     setTimeout(() => {
       document.getElementById('popup-overlay').classList.add('show');
+      startRevealSequence();
     }, 600);
   }
 }
@@ -917,11 +990,86 @@ function revealAll() {
   document.querySelectorAll('.clue-item').forEach(el => el.classList.add('solved'));
   setTimeout(() => {
     document.getElementById('popup-overlay').classList.add('show');
+    startRevealSequence();
   }, 400);
 }
 
 function closePopup() {
   document.getElementById('popup-overlay').classList.remove('show');
+  // Reset stages for next time
+  document.getElementById('stage-1').style.display = 'block';
+  document.getElementById('stage-2').style.display = 'none';
+  document.getElementById('stage-3').style.display = 'none';
+}
+
+function startRevealSequence() {
+  // Stage 1 already visible (celebration)
+  // After 2.5s, fade to stage 2 (bridge text)
+  setTimeout(() => {
+    const s1 = document.getElementById('stage-1');
+    s1.style.opacity = '0';
+    setTimeout(() => {
+      s1.style.display = 'none';
+      const s2 = document.getElementById('stage-2');
+      s2.style.display = 'block';
+      s2.style.opacity = '0';
+      setTimeout(() => {
+        s2.style.opacity = '1';
+        // Type out the bridge line
+        const bridgeEl = document.getElementById('bridge-text');
+        const bridgeText = 'You clearly know your Tamil cinema';
+        let i = 0;
+        const typer = setInterval(() => {
+          bridgeEl.textContent = bridgeText.slice(0, i+1);
+          i++;
+          if (i >= bridgeText.length) {
+            clearInterval(typer);
+            // After pause, go to stage 3
+            setTimeout(() => {
+              s2.style.opacity = '0';
+              setTimeout(() => {
+                s2.style.display = 'none';
+                showOCOStage();
+              }, 600);
+            }, 1200);
+          }
+        }, 45);
+      }, 100);
+    }, 500);
+  }, 2500);
+}
+
+function showOCOStage() {
+  const s3 = document.getElementById('stage-3');
+  s3.style.display = 'block';
+  s3.style.opacity = '0';
+  setTimeout(() => {
+    s3.style.opacity = '1';
+    // Logo fades in
+    setTimeout(() => {
+      document.querySelector('.oco-logo-reveal').classList.add('visible');
+    }, 200);
+    // Name slides open
+    setTimeout(() => {
+      document.getElementById('oco-name').classList.add('visible');
+    }, 700);
+    // Pillars appear
+    setTimeout(() => {
+      const p = document.getElementById('oco-pillars');
+      p.textContent = 'Focus. Sleep. Explore.';
+      p.classList.add('visible');
+    }, 1600);
+    // Tagline
+    setTimeout(() => {
+      const t = document.getElementById('oco-small');
+      t.textContent = 'No Scroll. No Ads. No Video. No Algorithm.';
+      t.classList.add('visible');
+    }, 2200);
+    // Badges
+    setTimeout(() => {
+      document.getElementById('oco-badges').classList.add('visible');
+    }, 2800);
+  }, 100);
 }
 
 // Close on overlay click
@@ -948,18 +1096,29 @@ if (firstKey) {
 <div class="popup-overlay" id="popup-overlay">
   <div class="popup">
     <button class="popup-close" onclick="closePopup()">&#x2715;</button>
-    <div class="popup-star">&#127881;</div>
-    <h2>Superstar Salute!</h2>
-    <p class="popup-sub">You found all <strong>27 Rajinikanth films</strong> in this crossword.<br>Style is everything — and so is knowing your Tamil cinema.</p>
-    <div class="popup-divider"></div>
-    <div class="popup-oco-label">You clearly know your Tamil cinema</div>
-    <img src="oco-logo.png" alt="Oru Cup Oxygen" style="height:48px;width:auto;margin:0.5rem auto 0.3rem;display:block;">
-    <div class="popup-oco-tagline">Now hear it.</div>
-    <p class="popup-oco-desc">Tamil audio wellness.<br>Focus. Sleep. Explore.<br>No Scroll. No Ads. No Video. No Algorithm.</p>
-    <div class="popup-badges">
-      <a class="popup-badge badge-ios" href="https://apps.apple.com/in/app/orucupoxygen/id6758971206" target="_blank">App Store</a>
-      <a class="popup-badge badge-android" href="https://play.google.com/store/apps/details?id=com.orucupoxygen.app" target="_blank">Google Play</a>
-      <a class="popup-badge badge-web" href="https://orucupoxygen.com" target="_blank">Visit Website</a>
+    <!-- Stage 1: Celebration -->
+    <div class="reveal-stage" id="stage-1">
+      <div class="popup-star">&#127881;</div>
+      <h2>Superstar Salute!</h2>
+      <p class="popup-sub">You found all <strong>27 Rajinikanth films</strong> in this crossword.<br>Style is everything — and so is knowing your Tamil cinema.</p>
+    </div>
+
+    <!-- Stage 2: Bridge -->
+    <div class="reveal-stage" id="stage-2" style="display:none;">
+      <div class="bridge-line" id="bridge-text"></div>
+    </div>
+
+    <!-- Stage 3: OCO reveal -->
+    <div class="reveal-stage" id="stage-3" style="display:none;">
+      <img src="oco-logo.png" alt="Oru Cup Oxygen" class="oco-logo-reveal">
+      <div class="oco-name-reveal" id="oco-name">ORU CUP OXYGEN</div>
+      <p class="oco-pillars" id="oco-pillars"></p>
+      <p class="oco-tagline-small" id="oco-small"></p>
+      <div class="popup-badges" id="oco-badges" style="opacity:0;">
+        <a class="popup-badge badge-ios" href="https://apps.apple.com/in/app/orucupoxygen/id6758971206" target="_blank">App Store</a>
+        <a class="popup-badge badge-android" href="https://play.google.com/store/apps/details?id=com.orucupoxygen.app" target="_blank">Google Play</a>
+        <a class="popup-badge badge-web" href="https://orucupoxygen.com" target="_blank">Visit Website</a>
+      </div>
     </div>
   </div>
 </div>
